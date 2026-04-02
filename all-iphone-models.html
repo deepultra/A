@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历代iPhone CPU工艺与运存演进</title>
+    <style>
+        /* --- CSS 样式 (已更新) --- */
+        :root {
+            --primary-color: #007aff;
+            --secondary-color: #f2f2f7;
+            --text-color: #333;
+            --light-text: #8e8e93;
+            --border-color: #d1d1d6;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--light-text);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        select {
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: white;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .chart-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .phone-card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .phone-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .phone-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .info-section {
+            margin-bottom: 15px;
+        }
+        
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-title {
+            font-size: 0.9rem;
+            color: var(--light-text);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: var(--light-text);
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .ram-chart {
+            width: 100%;
+            height: 10px;
+            background-color: #e5e5ea;
+            border-radius: 5px;
+            margin-top: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ram-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .ram-bar::after {
+            content: attr(data-ram);
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .no-data {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: var(--light-text);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>历代iPhone CPU工艺与运存演进</h1>
+            <p class="subtitle">一个展示iPhone硬件发展的小工具</p>
+        </header>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="year-filter">按年份筛选:</label>
+                <select id="year-filter">
+                    <option value="all">所有年份</option>
+                    <!-- 年份将由JS动态生成 -->
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="process-filter">按CPU工艺筛选:</label>
+                <select id="process-filter">
+                    <option value="all">所有工艺</option>
+                    <!-- 工艺将由JS动态生成 -->
+                </select>
+            </div>
+        </div>
+
+        <div class="chart-container" id="chart-container">
+            <!-- iPhone 卡片将由JS动态生成 -->
+        </div>
+    </div>
+
+    <script>
+        // --- 1. 数据定义 (已更新) ---
+        // 这里存储了所有iPhone的信息，易于维护和扩展
+        const iphoneData = [
+            { name: "iPhone 2G", year: 2007, cpuProcess: "90nm", ram: 0.128, screenSize: 3.5, batteryCapacity: 1420, cameraSensor: 1/10, weight: 135 },
+            { name: "iPhone 3G", year: 2008, cpuProcess: "90nm", ram: 0.128, screenSize: 3.5, batteryCapacity: 1150, cameraSensor: 1/10, weight: 133 },
+            { name: "iPhone 3GS", year: 2009, cpuProcess: "65nm", ram: 0.256, screenSize: 3.5, batteryCapacity: 1219, cameraSensor: 1/10, weight: 135 },
+            { name: "iPhone 4", year: 2010, cpuProcess: "45nm", ram: 0.512, screenSize: 3.5, batteryCapacity: 1420, cameraSensor: 1/10, weight: 137 },
+            { name: "iPhone 4S", year: 2011, cpuProcess: "45nm", ram: 0.512, screenSize: 3.5, batteryCapacity: 1432, cameraSensor: 1/10, weight: 140 },
+            { name: "iPhone 5", year: 2012, cpuProcess: "32nm", ram: 1, screenSize: 4.0, batteryCapacity: 1440, cameraSensor: 1/10, weight: 112 },
+            { name: "iPhone 5S", year: 2013, cpuProcess: "28nm", ram: 1, screenSize: 4.0, batteryCapacity: 1560, cameraSensor: 1/10, weight: 112 },
+            { name: "iPhone 6 / 6 Plus", year: 2014, cpuProcess: "20nm", ram: 1, screenSize: 4.7, batteryCapacity: 1810, cameraSensor: 1/10, weight: 129 },
+            { name: "iPhone 6S / 6S Plus", year: 2015, cpuProcess: "16nm", ram: 2, screenSize: 4.7, batteryCapacity: 1715, cameraSensor: 1/10, weight: 143 },
+            { name: "iPhone 7 / 7 Plus", year: 2016, cpuProcess: "16nm", ram: 2, screenSize: 4.7, batteryCapacity: 1960, cameraSensor: 1/10, weight: 138 },
+            { name: "iPhone 8 / 8 Plus", year: 2017, cpuProcess: "10nm", ram: 2, screenSize: 4.7, batteryCapacity: 1821, cameraSensor: 1/10, weight: 148 },
+            { name: "iPhone X", year: 2017, cpuProcess: "10nm", ram: 3, screenSize: 5.8, batteryCapacity: 2716, cameraSensor: 1/10, weight: 174 },
+            { name: "iPhone XR", year: 2018, cpuProcess: "7nm", ram: 3, screenSize: 6.1, batteryCapacity: 2942, cameraSensor: 1/10, weight: 194 },
+            { name: "iPhone XS / XS Max", year: 2018, cpuProcess: "7nm", ram: 4, screenSize: 5.8, batteryCapacity: 2658, cameraSensor: 1/10, weight: 177 },
+            { name: "iPhone 11", year: 2019, cpuProcess: "7nm", ram: 4, screenSize: 6.1, batteryCapacity: 3110, cameraSensor: 1/10, weight: 194 },
+            { name: "iPhone 11 Pro / Pro Max", year: 2019, cpuProcess: "7nm", ram: 4, screenSize: 5.8, batteryCapacity: 3046, cameraSensor: 1/10, weight: 188 },
+            { name: "iPhone SE (2nd Gen)", year: 2020, cpuProcess: "7nm", ram: 3, screenSize: 4.7, batteryCapacity: 1821, cameraSensor: 1/10, weight: 148 },
+            { name: "iPhone 12 / 12 Mini", year: 2020, cpuProcess: "5nm", ram: 4, screenSize: 6.1, batteryCapacity: 2775, cameraSensor: 1/10, weight: 162 },
+            { name: "iPhone 12 Pro / Pro Max", year: 2020, cpuProcess: "5nm", ram: 6, screenSize: 6.1, batteryCapacity: 2815, cameraSensor: 1/10, weight: 187 },
+            { name: "iPhone 13 / 13 Mini", year: 2021, cpuProcess: "5nm", ram: 4, screenSize: 6.1, batteryCapacity: 3227, cameraSensor: 1/10, weight: 173 },
+            { name: "iPhone 13 Pro / Pro Max", year: 2021, cpuProcess: "5nm", ram: 6, screenSize: 6.1, batteryCapacity: 3095, cameraSensor: 1/10, weight: 203 },
+            { name: "iPhone SE (3rd Gen)", year: 2022, cpuProcess: "5nm", ram: 4, screenSize: 4.7, batteryCapacity: 2018, cameraSensor: 1/10, weight: 144 },
+            { name: "iPhone 14 / 14 Plus", year: 2022, cpuProcess: "5nm", ram: 6, screenSize: 6.1, batteryCapacity: 3279, cameraSensor: 1/10, weight: 172 },
+            { name: "iPhone 14 Pro / Pro Max", year: 2022, cpuProcess: "4nm", ram: 6, screenSize: 6.1, batteryCapacity: 3200, cameraSensor: 1/10, weight: 206 },
+            { name: "iPhone 15 / 15 Plus", year: 2023, cpuProcess: "4nm", ram: 6, screenSize: 6.1, batteryCapacity: 3274, cameraSensor: 1/10, weight: 171 },
+            { name: "iPhone 15 Pro / Pro Max", year: 2023, cpuProcess: "3nm", ram: 8, screenSize: 6.1, batteryCapacity: 3274, cameraSensor: 1/10, weight: 187 },
+            { name: "iPhone 16", year: 2024, cpuProcess: "3nm", ram: 8, screenSize: 6.1, batteryCapacity: 3355, cameraSensor: 1/10, weight: 175 },
+            { name: "iPhone 16 Pro", year: 2024, cpuProcess: "3nm", ram: 12, screenSize: 6.3, batteryCapacity: 4422, cameraSensor: 1/10, weight: 200 },
+            { name: "iPhone 17", year: 2025, cpuProcess: "2nm", ram: 8, screenSize: 6.1, batteryCapacity: 3400, cameraSensor: 1/10, weight: 175 },
+            { name: "iPhone 17 Pro", year: 2025, cpuProcess: "2nm", ram: 12, screenSize: 6.3, batteryCapacity: 4500, cameraSensor: 1/10, weight: 200 },
+            { name: "iPhone 18", year: 2026, cpuProcess: "2nm", ram: 12, screenSize: 6.1, batteryCapacity: 3500, cameraSensor: 1/10, weight: 175 },
+            { name: "iPhone 18 Pro", year: 2026, cpuProcess: "2nm", ram: 16, screenSize: 6.3, batteryCapacity: 4600, cameraSensor: 1/10, weight: 200 }
+        ];
+
+        // --- 2. 初始化 ---
+        const chartContainer = document.getElementById('chart-container');
+        const yearFilter = document.getElementById('year-filter');
+        const processFilter = document.getElementById('process-filter');
+        
+        // 找到最大的运存值，用于归一化图表宽度
+        const maxRam = Math.max(...iphoneData.map(phone => phone.ram));
+
+        // --- 3. 功能函数 (已更新) ---
+
+        /**
+         * 渲染iPhone卡片
+         * @param {Array} phones - 要渲染的iPhone数据数组
+         */
+        function renderPhones(phones) {
+            if (phones.length === 0) {
+                chartContainer.innerHTML = `<div class="no-data">没有找到符合条件的iPhone。</div>`;
+                return;
+            }
+
+            chartContainer.innerHTML = ''; // 清空现有内容
+            phones.forEach(phone => {
+                const ramBarWidth = (phone.ram / maxRam) * 100;
+                const card = document.createElement('div');
+                card.className = 'phone-card';
+                card.innerHTML = `
+                    <h3 class="phone-name">${phone.name}</h3>
+                    
+                    <div class="info-section">
+                        <div class="info-title">核心规格</div>
+                        <div class="info-item">
+                            <span class="info-label">发布年份</span>
+                            <span class="info-value">${phone.year}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">CPU工艺</span>
+                            <span class="info-value">${phone.cpuProcess}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">运行内存 (RAM)</span>
+                            <span class="info-value">${phone.ram} GB</span>
+                        </div>
+                        <div class="ram-chart">
+                            <div class="ram-bar" style="width: ${ramBarWidth}%;" data-ram="${phone.ram} GB"></div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title">详细规格</div>
+                        <div class="info-item">
+                            <span class="info-label">屏幕尺寸</span>
+                            <span class="info-value">${phone.screenSize}"</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">电池容量</span>
+                            <span class="info-value">${phone.batteryCapacity} mAh</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">主摄传感器</span>
+                            <span class="info-value">${phone.cameraSensor}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">重量</span>
+                            <span class="info-value">${phone.weight} g</span>
+                        </div>
+                    </div>
+                `;
+                chartContainer.appendChild(card);
+            });
+        }
+
+        /**
+         * 初始化筛选器选项
+         */
+        function initFilters() {
+            const years = [...new Set(iphoneData.map(phone => phone.year))].sort();
+            const processes = [...new Set(iphoneData.map(phone => phone.cpuProcess))].sort();
+
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = `${year}年`;
+                yearFilter.appendChild(option);
+            });
+
+            processes.forEach(process => {
+                const option = document.createElement('option');
+                option.value = process;
+                option.textContent = process;
+                processFilter.appendChild(option);
+            });
+        }
+
+        /**
+         * 获取筛选后的数据
+         * @returns {Array} 筛选后的iPhone数据数组
+         */
+        function getFilteredData() {
+            const selectedYear = yearFilter.value;
+            const selectedProcess = processFilter.value;
+
+            return iphoneData.filter(phone => {
+                const yearMatch = selectedYear === 'all' || phone.year == selectedYear;
+                const processMatch = selectedProcess === 'all' || phone.cpuProcess === selectedProcess;
+                return yearMatch && processMatch;
+            });
+        }
+
+        // --- 4. 事件监听与程序启动 ---
+        
+        // 当筛选器的值改变时，重新渲染
+        yearFilter.addEventListener('change', () => {
+            renderPhones(getFilteredData());
+        });
+
+        processFilter.addEventListener('change', () => {
+            renderPhones(getFilteredData());
+        });
+
+        // 初始化：填充筛选器并渲染所有数据
+        initFilters();
+        renderPhones(iphoneData);
+
+    </script>
+</body>
+</html>
