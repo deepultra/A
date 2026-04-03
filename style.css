@@ -1,0 +1,286 @@
+/* style.css */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.page-header {
+    background: linear-gradient(135deg, #1a73e8, #0d47a1);
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 3em;
+    margin: 0;
+    font-weight: 700;
+}
+
+.page-header p {
+    font-size: 1.5em;
+    margin: 10px 0 0;
+    opacity: 0.9;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.controls {
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+#lock-status {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+/* Switch toggle for lock */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+h2 {
+    text-align: center;
+    color: #1a73e8;
+    margin-bottom: 20px;
+}
+
+#groups-container {
+    /* 修改这里，实现每行3个分组 */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.group-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.group-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.group-header {
+    background-color: #1a73e8;
+    color: white;
+    padding: 15px;
+    font-size: 1.4em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.group-content {
+    padding: 15px;
+}
+
+.group-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+.group-table th, .group-table td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.group-table th {
+    background-color: #f1f3f4;
+    font-weight: bold;
+}
+
+.team-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.team-row:hover {
+    background-color: #e8f0fe;
+}
+
+.team-row.selected {
+    background-color: #d2e3fc;
+    font-weight: bold;
+}
+
+.team-flag {
+    width: 30px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+积分输入框 {
+    width: 40px;
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+/* 积分榜样式 */
+.standings-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+.standings-table th, .standings-table td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.standings-table th {
+    background-color: #f1f3f4;
+    font-weight: bold;
+}
+
+.standings-table .rank-1 {
+    background-color: #fff9c4; /* 金色 */
+}
+.standings-table .rank-2 {
+    background-color: #e0e0e0; /* 银色 */
+}
+.standings-table .rank-3 {
+    background-color: #bcaaa4; /* 铜色 */
+}
+
+/* 新增：名次输入框样式 */
+.standings-table .rank-input {
+    width: 30px;
+    padding: 3px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* 路线图样式 */
+#bracket-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background-color: #fafafa;
+}
+
+.bracket-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.bracket-match {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.bracket-team {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    background-color: #fff;
+    transition: all 0.2s;
+}
+
+.bracket-team .flag {
+    width: 24px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.bracket-team .name {
+    font-weight: bold;
+}
+
+.bracket-team.empty {
+    background-color: #f1f3f4;
+    color: #5f6368;
+}
+
+#update-bracket-btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 12px 24px;
+    font-size: 16px;
+    color: white;
+    background-color: #1a73e8;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#update-bracket-btn:hover {
+    background-color: #1557b0;
+}
